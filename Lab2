@@ -1,0 +1,94 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace ConsoleApp4
+{
+    internal class Program
+    {
+        class UrlVisit
+        {
+            public string Url { get; set; }
+            public DateTime time { get; set; }
+
+            public UrlVisit(string url)
+            {
+                Url = url;
+                time = DateTime.Now;
+            }
+        }
+        class UrlVisitTracer
+        {
+            private static UrlVisitTracer _instance = null;
+            public List<UrlVisit> visits { get; set; }
+
+            private UrlVisitTracer()
+            {
+                this.visits = new List<UrlVisit>()
+                {
+                    new UrlVisit("snapchat.com"),
+                    new UrlVisit("reddit.com"),
+                    new UrlVisit("youtube.com"),
+                };
+            }
+            public static UrlVisitTracer getInstance()
+            {
+                if (_instance == null)
+                {
+                    _instance = new UrlVisitTracer();
+                }
+                return _instance;
+            }
+
+            public void Add(UrlVisit visit)
+            {
+                this.visits.Add(visit);
+            }
+
+            public void Clear()
+            {
+                this.visits.Clear();
+            }
+
+            public void Save(string path)
+            {
+                using (StreamWriter stream = new StreamWriter(path))
+                {
+                    foreach (UrlVisit visit in visits)
+                    {
+                        stream.WriteLine($"{visit.Url} at {visit.time}");
+                    }
+                }
+            }
+            public void Print()
+            {
+                foreach (UrlVisit visit in visits)
+                {
+                    Console.WriteLine($"{visit.Url} at {visit.time}");
+                }
+                Console.WriteLine();
+            }
+        }
+        static void Main(string[] args)
+        {
+            UrlVisitTracer tracer1 = UrlVisitTracer.getInstance();
+            tracer1.Print();
+            UrlVisitTracer tracer2 = UrlVisitTracer.getInstance();
+            tracer2.Print();
+
+            tracer1.Add(new UrlVisit("facebook.com"));
+            tracer1.Add(new UrlVisit("instagram.com"));
+
+            tracer1.Print();
+            tracer2.Print();
+
+            tracer1.Clear();
+
+            tracer1.Print();
+            tracer2.Print();
+        }
+    }
+}
