@@ -1,0 +1,113 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp5
+{
+    internal class Program
+    {   
+        class Login
+        {
+            private IStrategy strategy;
+
+            public Login()
+            {
+
+            }
+
+            public void SetStrategy(IStrategy strategy)
+            {
+                this.strategy = strategy;
+            }
+
+            public void LogIntoAccount()
+            {
+                this.strategy.DoAlgorithm();
+            }
+        }
+        public interface IStrategy
+        {
+            void DoAlgorithm();
+        }
+        class RegularLogin: IStrategy
+        {
+            public void DoAlgorithm()
+            {
+                Console.WriteLine("Username: ");
+                string username = Console.ReadLine();
+                Console.WriteLine("Password: ");
+                string password = Console.ReadLine();
+                if (username.Length>0 && password.Length>0)
+                {
+                    Console.WriteLine("Success!");
+                }
+                else
+                {
+                    Console.WriteLine("Fail!");
+                }
+            }
+        }
+        class SMSLogin : IStrategy
+        {
+            private static Random random = new Random();
+
+            public static string RandomString()
+            {
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                return new string(Enumerable.Repeat(chars, 5)
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
+            }
+            public void DoAlgorithm()
+            {
+                Console.WriteLine("Username: ");
+                string username = Console.ReadLine();
+                Console.WriteLine("Phone number: ");
+                Console.ReadLine();
+                string code = RandomString();
+                Console.WriteLine(code);
+                string userCode = Console.ReadLine();
+                if (code == userCode && username.Length>0)
+                {
+                    Console.WriteLine("Success!");
+                }
+                else
+                {
+                    Console.WriteLine("Fail!");
+                }
+            }
+        }
+        class OuterLogin : IStrategy
+        {
+            public void DoAlgorithm()
+            {
+                Console.WriteLine("Outer platform account: ");
+                string platform = Console.ReadLine();
+                Console.WriteLine("Password: ");
+                string password = Console.ReadLine();
+                if (platform.Length > 0 && password.Length > 0)
+                {
+                    Console.WriteLine("Success!");
+                }
+                else
+                {
+                    Console.WriteLine("Fail!");
+                }
+            }
+        }
+        static void Main(string[] args)
+        {
+            var login = new Login();
+
+            login.SetStrategy(new RegularLogin());
+            login.LogIntoAccount();
+
+            login.SetStrategy(new SMSLogin());
+            login.LogIntoAccount();
+
+            login.SetStrategy(new OuterLogin());
+            login.LogIntoAccount();
+        }
+    }
+}
